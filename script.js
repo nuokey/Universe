@@ -17,7 +17,7 @@ let maxFps = 60;
 
 let time = 0;
 
-let startParticles = 1;
+let startParticles = 1000;
 
 for (let i = 0; i < startParticles; i++) {
     // 0, 1 - координаты
