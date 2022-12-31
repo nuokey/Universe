@@ -74,6 +74,9 @@ let scale = 1;
 let cameraX = 0;
 let cameraY = 0;
 
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
 // Характеристики частицы:
     // 0, 1 - координаты
     // 2, 3 - скорость
@@ -142,6 +145,9 @@ function frame() {
 		draw();
 		pastTime = Date.now();
 	}
+
+    // canvas.width = window.innerWidth;
+    // canvas.height = window.innerHeight;
 }
 
 function draw() {
@@ -201,19 +207,6 @@ function particlesMovement() {
         ctx.fillRect((e[0] - cameraX) / scale + canvas.width / 2, (e[1] - cameraY) / scale + canvas.height / 2, 2, 2);
         e[0] += e[2];
         e[1] += e[3];
-
-        // if (e[0] > canvas.width) {
-        //     e[0] = 0;
-        // }
-        // if (e[1] > canvas.height) {
-        //     e[1] = 0;
-        // }
-        // if (e[0] < 0) {
-        //     e[0] = canvas.width;
-        // }
-        // if (e[1] < 0) {
-        //     e[1] = canvas.height;
-        // }
 
         if (e[4] == 0 && e[5] >= e[6]) {
             create.proton(e[0] + 5, e[1], e[2], e[3]);
@@ -298,24 +291,11 @@ function atomsMovement() {
         heliumText.style.color = '#F4C271';
         
         ctx.beginPath();
-        ctx.arc(e[0] / scale + canvas.width / 2 - cameraX, e[1] / scale + canvas.width / 2 - cameraY, e[4], 0, 2 * Math.PI, false);
+        ctx.arc((e[0] - cameraX) / scale + canvas.width / 2, (e[1] - cameraY) / scale + canvas.height / 2, e[4], 0, 2 * Math.PI, false);
         ctx.fill();
 
         e[0] += e[2];
         e[1] += e[3];
-
-        // if (e[0] > canvas.width) {
-        //     e[0] = 0;
-        // }
-        // if (e[1] > canvas.height) {
-        //     e[1] = 0;
-        // }
-        // if (e[0] < 0) {
-        //     e[0] = canvas.width;
-        // }
-        // if (e[1] < 0) {
-        //     e[1] = canvas.height;
-        // }
 
         if (e[4] == 1 && e[5] == 1) {
             hidrogen += 1;
@@ -430,6 +410,11 @@ canvas.addEventListener('mousemove', function(event) {
     const rect = canvas.getBoundingClientRect();
     x = event.clientX - rect.left;
     y = event.clientY - rect.top;
+})
+
+window.addEventListener('resize', function(event) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 })
 
 document.addEventListener('wheel', function(event) {
