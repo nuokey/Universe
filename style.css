@@ -6,6 +6,8 @@ body {
 
     position: fixed;
     margin: 0px;
+
+    text-align: right;
 }
 
 canvas {

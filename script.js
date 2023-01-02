@@ -60,7 +60,7 @@ let time = 0;
 
 let startParticles = 1000;
 
-let bigBang = true;
+let bigBang = false;
 
 let mouseGravity;
 
@@ -255,8 +255,8 @@ function particlesMovement() {
                 deleteObject.particle(e);
             }
             else if (distance == 0 && time == 1) {
-                e[3] += getRandomArbitrary(-0.25, 0.25);
-                e[2] += getRandomArbitrary(-0.25, 0.25);
+                e[3] += getRandomArbitrary(-0.05, 0.05);
+                e[2] += getRandomArbitrary(-0.05, 0.05);
             }
         });
 
