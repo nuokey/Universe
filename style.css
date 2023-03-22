@@ -17,5 +17,7 @@ canvas {
 .info {
     position:absolute;
     z-index:9999;
-    width: 100%;
+    width: auto;
+
+    right: 20px;
 }

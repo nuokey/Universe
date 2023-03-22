@@ -58,9 +58,9 @@ let maxFps = 60;
 
 let time = 0;
 
-let startParticles = 1000;
+let startParticles = 500;
 
-let bigBang = false;
+let bigBang = true;
 
 let mouseGravity;
 
@@ -209,8 +209,8 @@ function particlesMovement() {
         e[1] += e[3];
 
         if (e[4] == 0 && e[5] >= e[6]) {
-            create.proton(e[0] + 5, e[1], e[2], e[3]);
-            create.electron(e[0], e[1], -e[2], -e[3]);
+            create.proton(e[0] + e[2], e[1] + e[3], e[2], e[3]);
+            create.electron(e[0] - e[2], e[1] - e[3], -e[2], -e[3]);
             deleteObject.particle(e);
         }
 
@@ -263,13 +263,26 @@ function particlesMovement() {
         // Появление дейтерия и трития
         atoms.forEach(atom => {
             distance = Math.sqrt((atom[0] - e[0])**2 + (atom[1] - e[1])**2);
-            if (distance <= 1 && atom[5] == 1 && atom[4] < 3 && e[4] == 0 && Math.abs(e[2]**2 + e[3]**2) >= 2) {
+            if (distance <= 1 && atom[5] == 1 && atom[4] < 3 && e[4] == 0 && Math.sqrt(e[2]**2 + e[3]**2) >= 2) {
                 atom[4] += e[7];
                 particles.splice(particles.indexOf(e), 1);
 
                 if (atom[5] == 2) {
                     console.log(atom);
                 }
+            }
+
+            if (distance > 2) {
+                // Гравитационное взаимодействие
+
+                force = 1 / (distance ** 2)
+
+                sin = (e[1] - atom[1]) / distance;
+                cos = (e[0] - atom[0]) / distance;
+                e[3] -= sin * force;
+                e[2] -= cos * force;
+                atom[3] += sin * force;
+                atom[2] += cos * force;
             }
         });
     });
@@ -319,7 +332,7 @@ function atomsMovement() {
 
         atoms.forEach(object => {
             distance = Math.sqrt((object[0] - e[0])**2 + (object[1] - e[1])**2);
-            if (distance > 20) {
+            if (distance > 2) {
                 // Гравитационное взаимодействие
 
                 force = 1 / (distance ** 2)
@@ -329,24 +342,24 @@ function atomsMovement() {
                 e[3] -= sin * force;
                 e[2] -= cos * force;
             }
-            if (distance <= 20 && distance > 2) {
-                force = 1 / (distance ** 2)
+            // if (distance <= 20 && distance > 2) {
+            //     force = 1 / (distance ** 2)
 
-                sin = (e[1] - object[1]) / distance;
-                cos = (e[0] - object[0]) / distance;
-                e[3] += sin * force;
-                e[2] += cos * force;
-            }
+            //     sin = (e[1] - object[1]) / distance;
+            //     cos = (e[0] - object[0]) / distance;
+            //     e[3] += sin * force;
+            //     e[2] += cos * force;
+            // }
 
             // Синтез гелия-3
             if (distance < 2 && e[5] == 1 && object[5] == 1 && e[4] == 2 && object[4] == 1 && e != object) {
-                create.atom((e[0] + object[0])/2, (e[1] + object[1])/2, e[2] + object[2], e[3] + object[3], 3, 2);
+                create.atom((e[0] + object[0])/2, (e[1] + object[1])/2, (e[2] * e[4] + object[2] * object[4]) / (e[4] + object[4]), (e[3] * e[4] + object[3] * object[4]) / (e[4] + object[4]), 3, 2);
                 deleteObject.atom(e);
                 deleteObject.atom(object);
             }
             // Синтез гелия
             if (distance < 2 && e[5] == object[5] == 1 && e[4] == 3 && object[4] == 2) {
-                create.atom((e[0] + object[0])/2, (e[1] + object[1])/2, e[2] + object[2], e[3] + object[3], 4, 2);
+                create.atom((e[0] + object[0])/2, (e[1] + object[1])/2, (e[2] * e[4] + object[2] * object[4]) / (e[4] + object[4]), (e[3] * e[4] + object[3] * object[4]) / (e[4] + object[4]), 4, 2);
                 create.neutron(e[0], e[1], getRandomArbitrary(-e[2], e[2]), getRandomArbitrary(-e[3], e[3]));
                 deleteObject.atom(e);
                 deleteObject.atom(object);
@@ -428,7 +441,7 @@ document.addEventListener('wheel', function(event) {
 
 canvas.addEventListener('mousedown', function(event) {
     if (event.buttons == 1) {
-        create.neutron(x, y, getRandomArbitrary(-2, 2), getRandomArbitrary(-2, 2));
+        create.neutron((x - canvas.width / 2) * scale + cameraX, (y - canvas.height / 2) * scale + cameraY, getRandomArbitrary(-0.25, 0.25), getRandomArbitrary(-0.25, 0.25));
     }
     else if (event.buttons == 2) {
         mouseGravity = true;
